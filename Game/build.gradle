@@ -61,6 +61,8 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+        compile "com.badlogicgames.ashley:ashley:1.7.0"
         
     }
 }
