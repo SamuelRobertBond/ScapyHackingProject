@@ -6,27 +6,52 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 
 import client.ClientManager;
 import client.utils.Constants;
-import client.worlds.GameWorld;
+import client.worlds.ClientGameWorld;
+import network.requests.JoinRequest;
+import network.responses.JoinResponse;
 import server.ServerManager;
 
 public class GameScreen implements Screen{
 
 	private Game game;
-	private GameWorld world;
+	private ClientGameWorld world;
 	private OrthographicCamera cam;
 	
 	//Client Server
 	private ServerManager server;
 	private ClientManager client;
 	
-	public GameScreen(Game game, ClientManager client, ServerManager server, String name) {
+	public GameScreen(Game game, boolean isServer) {
+		
 		this.game = game;
 		cam = new OrthographicCamera(Constants.V_WIDTH, Constants.V_HEIGHT);
-		world = new GameWorld(name, cam);
-		world.enableDebuging(server);
+		
+		if(isServer){
+			server = new ServerManager();
+			server.enableDebug(cam);
+		}
+		
+		client = new ClientManager();
+		world = new ClientGameWorld(client, cam);
+		
+		//Join Listener
+		client.getClient().addListener(new Listener(){
+			
+			@Override
+			public void received(Connection connection, Object object) {
+				if(object instanceof JoinResponse){
+					
+				}
+			}
+			
+		});
+		client.getClient().sendTCP(new JoinRequest());
+		
 	}
 	
 	@Override
@@ -72,10 +97,10 @@ public class GameScreen implements Screen{
 		}
 		
 	}
+	
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
 		
 	}
 

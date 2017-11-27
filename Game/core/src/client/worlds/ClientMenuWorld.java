@@ -2,7 +2,7 @@ package client.worlds;
 
 import client.interfaces.World;
 
-public class MenuWorld implements World{
+public class ClientMenuWorld implements World{
 
 	@Override
 	public void render(float delta) {

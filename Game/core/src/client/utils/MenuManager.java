@@ -41,6 +41,7 @@ public class MenuManager {
 		
 	}
 	
+	
 	/**
 	 * Renders the stage containing the table
 	 */
@@ -200,6 +201,10 @@ public class MenuManager {
 	 */
 	public Stage getStage(){
 		return stage;
+	}
+	
+	public Table getActiveTable(){
+		return active;
 	}
 	
 	/**

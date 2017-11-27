@@ -1,25 +1,32 @@
 package client.worlds;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
+import client.ClientManager;
+import client.inputhandlers.PlayerInputManager;
 import client.interfaces.World;
 import client.systems.MapRenderSystem;
-import server.ServerManager;
 
-public class GameWorld implements World{
+public class ClientGameWorld implements World{
 
 	private Engine engine;
-	
-	private OrthographicCamera camera;
+	private InputMultiplexer in;
 	
 	//Systems
 	private MapRenderSystem mapRenderSystem;
 	
-	public GameWorld(String name, OrthographicCamera camera) {
+	public ClientGameWorld(ClientManager client, OrthographicCamera camera) {
 		
 		engine = new Engine();
-		this.camera = camera;
+		in = new InputMultiplexer();
+		
+		PlayerInputManager playerInput = new PlayerInputManager(client.getClient());
+		in.addProcessor(playerInput);
+		
+		Gdx.input.setInputProcessor(in);
 		
 		//Disposable Systems
 		mapRenderSystem = new MapRenderSystem(camera);
@@ -32,10 +39,6 @@ public class GameWorld implements World{
 	@Override
 	public void render(float delta) {
 		engine.update(delta);
-	}
-	
-	public void enableDebuging(ServerManager server){
-		server.enableDebug(camera);
 	}
 
 	@Override

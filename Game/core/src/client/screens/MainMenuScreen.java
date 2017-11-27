@@ -6,6 +6,9 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import client.utils.Constants;
@@ -29,15 +32,45 @@ public class MainMenuScreen implements Screen{
 		menu = new MenuManager(view);
 		menu.addLabel("Pirate Cannon Shooter", TextSize.MEDIUM);
 		menu.row();
-		menu.addTextButton("Button");
+		
+		TextButton b = menu.addTextButton("Client");
+		b.pad(3f, 6f, 3f, 6f);
+		b.addListener(new ChangeListener(){
+			
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				startGame(false);
+			}
+			
+		});
+		menu.getActiveTable().getCell(b).pad(10f, 0, 1f, 0);
 		menu.row();
-		menu.addTextField("Text:", 100, 100, 200, 50);
+		
+		b = menu.addTextButton("Server");
+		b.addListener(new ChangeListener(){
+		
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				startGame(true);
+			}
+			
+		});
+		
+		b.pad(3f, 6f, 3f, 6f);
+		menu.getActiveTable().getCell(b).pad(1f, 0, 1f, 0);
 		
 		in = new InputMultiplexer();
 		in.addProcessor(menu.getStage());
 		
 		Gdx.input.setInputProcessor(in);
 	}
+	
+	
+	private void startGame(boolean isServer){
+		this.dispose();
+		game.setScreen(new GameScreen(game, isServer));
+	}
+	
 	
 	@Override
 	public void show() {
@@ -53,11 +86,11 @@ public class MainMenuScreen implements Screen{
 		menu.render();
 		
 	}
+	
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
+		view.update(width, height);
 	}
 
 	@Override
