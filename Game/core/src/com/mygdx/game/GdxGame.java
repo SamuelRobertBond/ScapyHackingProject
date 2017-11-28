@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 
 import client.screens.GameScreen;
 import client.screens.MainMenuScreen;
-import client.utils.AssetLoader;
 
 public class GdxGame extends Game{
 

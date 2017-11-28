@@ -1,10 +1,10 @@
 package client.entities;
 
 import com.badlogic.ashley.core.Entity;
+import com.mygdx.game.AssetLoader;
 
 import client.components.PositionComponent;
 import client.components.SpriteComponent;
-import client.utils.AssetLoader;
 
 public class CannonBall extends Entity{
 	

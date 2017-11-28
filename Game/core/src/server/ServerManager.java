@@ -17,7 +17,7 @@ public class ServerManager {
 	private ServerGameWorld gameWorld;
 	private Timer timer;
 	
-	private final long TIMESTEP = 1000/60;
+	private final long TIMESTEP = 100/60;
 	
 	public ServerManager() {
 		

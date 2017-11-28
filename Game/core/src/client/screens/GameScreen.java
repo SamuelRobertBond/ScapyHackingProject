@@ -1,5 +1,7 @@
 package client.screens;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -8,9 +10,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.mygdx.game.Constants;
 
 import client.ClientManager;
-import client.utils.Constants;
+import client.entities.Player;
 import client.worlds.ClientGameWorld;
 import network.requests.JoinRequest;
 import network.responses.JoinResponse;
@@ -26,10 +29,11 @@ public class GameScreen implements Screen{
 	private ServerManager server;
 	private ClientManager client;
 	
+	
 	public GameScreen(Game game, boolean isServer) {
 		
 		this.game = game;
-		cam = new OrthographicCamera(Constants.V_WIDTH, Constants.V_HEIGHT);
+		cam = new OrthographicCamera(Constants.V_WIDTH / Constants.PPM, Constants.V_HEIGHT / Constants.PPM);
 		
 		if(isServer){
 			server = new ServerManager();
@@ -39,17 +43,6 @@ public class GameScreen implements Screen{
 		client = new ClientManager();
 		world = new ClientGameWorld(client, cam);
 		
-		//Join Listener
-		client.getClient().addListener(new Listener(){
-			
-			@Override
-			public void received(Connection connection, Object object) {
-				if(object instanceof JoinResponse){
-					
-				}
-			}
-			
-		});
 		client.getClient().sendTCP(new JoinRequest());
 		
 	}
@@ -69,7 +62,9 @@ public class GameScreen implements Screen{
 		cam.update();
 		
 		world.render(delta);
-		server.debugRenderer(delta);
+		if(server != null){
+			server.debugRenderer(delta);
+		}
 		
 		debugCamera(delta);
 		
@@ -78,22 +73,10 @@ public class GameScreen implements Screen{
 	
 	private void debugCamera(float delta){
 		
-		if(Gdx.input.isKeyPressed(Keys.W)){
-			cam.translate(0, 30 * delta);
-		}else if(Gdx.input.isKeyPressed(Keys.S)){
-			cam.translate(0, -30 * delta);
-		}
-		
-		if(Gdx.input.isKeyPressed(Keys.A)){
-			cam.translate(-30 * delta, 0);
-		}else if(Gdx.input.isKeyPressed(Keys.D)){
-			cam.translate(30 * delta, 0);
-		}
-		
 		if(Gdx.input.isKeyPressed(Keys.Z)){
-			cam.zoom += .2;
+			cam.zoom += 2;
 		}else if(Gdx.input.isKeyPressed(Keys.X)){
-			cam.zoom -= .2;
+			cam.zoom -= 2;
 		}
 		
 	}

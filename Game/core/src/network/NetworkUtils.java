@@ -8,6 +8,8 @@ import network.requests.MovementRequest;
 import network.requests.ShootRequest;
 import network.responses.JoinResponse;
 import network.responses.MovementResponse;
+import network.responses.PlayerMovementResponse;
+import network.responses.ProjectileMovementResponse;
 import network.responses.ShootResponse;
 
 public class NetworkUtils {
@@ -24,6 +26,8 @@ public class NetworkUtils {
 		kryo.register(JoinResponse.class);
 		kryo.register(ShootResponse.class);
 		kryo.register(MovementResponse.class);
+		kryo.register(PlayerMovementResponse.class);
+		kryo.register(ProjectileMovementResponse.class);
 		
 	}
 	

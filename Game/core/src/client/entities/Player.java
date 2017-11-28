@@ -1,32 +1,39 @@
 package client.entities;
 
 import com.badlogic.ashley.core.Entity;
+import com.mygdx.game.AssetLoader;
+import com.mygdx.game.Constants;
 
 import client.components.PositionComponent;
 import client.components.SpriteComponent;
 import client.components.StateComponent;
 import client.states.PlayerState;
-import client.utils.AssetLoader;
 
 public class Player extends Entity{
 
 	public final String name;
 	
-	private SpriteComponent spriteComponent;
-	private StateComponent stateComponent;
+	public final float PLAYER_WIDTH = 22;
+	public final float PLAYER_HEIGHT = 22;
 	
-	public Player(String name) {
+	public SpriteComponent spriteComponent;
+	public StateComponent stateComponent;
+	public PositionComponent positionComponent;
+	
+	public Player(String name, float x, float y) {
+		
 		this.name = name;
 		add(new StateComponent());
-	}
-	
-	public void addPlayer(float x, float y, float width, float height, float angle){
-		spriteComponent = new SpriteComponent(AssetLoader.CANNON_TEXTURE, width, height, angle);
+		
+		spriteComponent = new SpriteComponent(AssetLoader.CANNON_BASE_TEXTURE, PLAYER_WIDTH, PLAYER_HEIGHT, 0); //Base
+		positionComponent = new PositionComponent(x / Constants.PPM, y / Constants.PPM);
+		
 		add(spriteComponent);
-		add(new PositionComponent(x, y));
+		add(positionComponent);
+		
 	}
 	
-	public void killPlayer(){
+	public void kill(){
 		stateComponent.state = PlayerState.DEAD;
 	}
 	

@@ -1,18 +1,18 @@
 package network.responses;
 
-public class JoinResponse {
+public class PlayerMovementResponse{
 
 	public String name;
 	public float x;
 	public float y;
 	
-	public JoinResponse(String name, float x, float y) {
-		this.name = name;
+	public PlayerMovementResponse(String name, float x, float y) {
 		this.x = x;
 		this.y = y;
+		this.name = name;
 	}
 	
-	public JoinResponse() {
+	public PlayerMovementResponse() {
 		// TODO Auto-generated constructor stub
 	}
 

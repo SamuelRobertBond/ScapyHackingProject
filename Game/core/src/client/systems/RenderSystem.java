@@ -8,6 +8,8 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Constants;
 
 import client.components.PositionComponent;
 import client.components.SpriteComponent;
@@ -15,6 +17,7 @@ import client.components.SpriteComponent;
 public class RenderSystem extends EntitySystem{
 
 	private SpriteBatch batch;
+	private OrthographicCamera cam;
 	
 	private ComponentMapper<SpriteComponent> sm = ComponentMapper.getFor(SpriteComponent.class);
 	private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
@@ -23,7 +26,7 @@ public class RenderSystem extends EntitySystem{
 	
 	public RenderSystem(OrthographicCamera cam) {
 		batch = new SpriteBatch();
-		batch.setProjectionMatrix(cam.combined);
+		this.cam = cam;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -35,13 +38,16 @@ public class RenderSystem extends EntitySystem{
 	@Override
 	public void update(float deltaTime) {
 		
+		batch.setProjectionMatrix(cam.combined);
+		
 		batch.begin();
 		
 		//Draw Each Entity
 		for(Entity e : entities){
 			SpriteComponent sc = sm.get(e);
 			PositionComponent pc = pm.get(e);
-			sc.sprite.setPosition(pc.pos.x, pc.pos.y);
+			
+			sc.sprite.setPosition(pc.pos.x - sc.sprite.getWidth()/2, pc.pos.y - sc.sprite.getHeight()/2);
 			sc.sprite.draw(batch);
 		}
 		
