@@ -11,20 +11,27 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.esotericsoftware.kryonet.Server;
 
+import client.states.PlayerState;
+import network.responses.ProjectileMovementResponse;
+import network.responses.StateResponse;
 import server.entities.ServerCannonBall;
 import server.entities.ServerPlayer;
+import server.states.ProjectileState;
 
 public class ContactSystem implements ContactListener{
 	
 	private Engine engine;
 	private World world;
+	private Server server;
 	
 	private Queue<Fixture> destoryFixtures;
 	
-	public ContactSystem(Engine engine, World world) {
+	public ContactSystem(Engine engine, Server server, World world) {
 		this.engine = engine;
 		this.world = world;
+		this.server = server;
 		this.destoryFixtures = new LinkedList<Fixture>();
 	}
 	
@@ -46,9 +53,12 @@ public class ContactSystem implements ContactListener{
 		if(a.getUserData() instanceof ServerCannonBall){
 			
 			if(b.getUserData() instanceof ServerPlayer){
-				
-				//Hurt Server Player
-				
+				ServerPlayer p = (ServerPlayer)b.getUserData();
+				--p.hc.health;
+				if(p.hc.state != PlayerState.DEAD && p.hc.health < 1){
+					p.hc.state = PlayerState.DEAD;
+					server.sendToAllTCP(new StateResponse(p.NAME, p.hc.state));
+				}
 			}
 			
 			destoryFixtures.offer(a);
@@ -84,6 +94,13 @@ public class ContactSystem implements ContactListener{
 			Fixture a = destoryFixtures.remove();
 			
 			if(a.getUserData() != null && a != null){
+				
+				ServerCannonBall ball = (ServerCannonBall)a.getUserData(); 
+				
+				ProjectileMovementResponse r = new ProjectileMovementResponse(ball.idComponent.ENTITY_ID, a.getBody().getPosition().x, a.getBody().getPosition().y);
+				r.state = ProjectileState.DEAD;
+				server.sendToAllTCP(r);
+				
 				engine.removeEntity((Entity)a.getUserData());
 				world.destroyBody(a.getBody());
 			}

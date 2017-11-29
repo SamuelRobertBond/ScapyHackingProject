@@ -17,9 +17,9 @@ public class ServerCannonBall extends Entity{
 	public final float RADIUS = 5f;
 	public final float OFFSET = 17f;
 	
+	public ProjectileIdComponent idComponent;
 	private PhysicsComponent physicsComponent;
 	private MovementComponent movementComponent;
-	private ProjectileIdComponent idComponent;
 	
 	public ServerCannonBall(ServerPlayer player, int id, Vector2 angle) {
 		
@@ -39,6 +39,10 @@ public class ServerCannonBall extends Entity{
 		add(movementComponent);
 		add(idComponent);
 		
+	}
+
+	public Vector2 getPosition() {
+		return physicsComponent.body.getPosition();
 	}
 	
 	

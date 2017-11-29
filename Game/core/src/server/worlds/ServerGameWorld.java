@@ -15,6 +15,7 @@ import com.esotericsoftware.kryonet.Server;
 
 import client.inputhandlers.MovementState;
 import client.interfaces.World;
+import client.states.PlayerState;
 import network.requests.JoinRequest;
 import network.requests.MovementRequest;
 import network.requests.ShootRequest;
@@ -71,7 +72,7 @@ public class ServerGameWorld implements World{
 						JoinRequest r = (JoinRequest)object; //Used to retrieve name
 						
 						//Adding the player to the server and alerting all the clients
-						ServerPlayer player = new ServerPlayer(connection.getID() + "", 100, 100); //Change x and y here (50, 50)
+						ServerPlayer player = new ServerPlayer(connection.getID(), connection.getID() + "", 200, 200); //Change x and y here (50, 50)
 						
 						players.put(connection.getID(), player);
 						addPlayer(player);
@@ -109,7 +110,9 @@ public class ServerGameWorld implements World{
 				if(object instanceof ShootRequest){
 					ShootRequest r = (ShootRequest)object;
 					r.id = connection.getID();
-					shootrequests.offer(r);
+					if(players.get(r.id).hc.state != PlayerState.DEAD){
+						shootrequests.offer(r);
+					}
 				}
 				
 			}
@@ -147,9 +150,6 @@ public class ServerGameWorld implements World{
 			}
 		}
 		
-		//Projectiles
-		
-		
 	}
 	
 	public void enableDebugRenderer(OrthographicCamera cam) {
@@ -166,10 +166,9 @@ public class ServerGameWorld implements World{
 		
 		//ShootRequests
 		while(!shootrequests.isEmpty()){
-			fireProjectile(shootrequests.poll());
+			fireProjectile(shootrequests.remove());
 		}
-		
-		
+
 		engine.update(delta);
 	}
 

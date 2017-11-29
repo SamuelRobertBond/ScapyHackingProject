@@ -12,9 +12,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Server;
 import com.mygdx.game.AssetLoader;
 
+import client.states.PlayerState;
 import network.responses.MovementResponse;
 import network.responses.PlayerMovementResponse;
+import network.responses.ProjectileMovementResponse;
 import server.Box2DUtils;
+import server.components.HealthComponent;
 import server.components.MovementComponent;
 import server.components.PhysicsComponent;
 import server.entities.ServerCannonBall;
@@ -32,6 +35,7 @@ public class PhysicsSystem extends EntitySystem{
 	
 	private ComponentMapper<PhysicsComponent> pm = ComponentMapper.getFor(PhysicsComponent.class);
 	private ComponentMapper<MovementComponent> mm = ComponentMapper.getFor(MovementComponent.class);
+	private ComponentMapper<HealthComponent> hm = ComponentMapper.getFor(HealthComponent.class);
 	
 	public PhysicsSystem(Server server) {
 		
@@ -46,7 +50,7 @@ public class PhysicsSystem extends EntitySystem{
 	@Override
 	public void addedToEngine(Engine engine) {
 		entities = engine.getEntitiesFor(Family.all(PhysicsComponent.class, MovementComponent.class).get());
-		collisionListener = new ContactSystem(engine, world);
+		collisionListener = new ContactSystem(engine, server, world);
 		world.setContactListener(collisionListener);
 	}
 	
@@ -54,10 +58,13 @@ public class PhysicsSystem extends EntitySystem{
 	public void update(float timeStep){
 		
 		//Apply Impulse
+		
 		for(Entity e : entities){
 			PhysicsComponent pc = pm.get(e);
 			MovementComponent mc = mm.get(e);
-			if(mc.xIntensity != 0 || mc.yIntensity !=0){
+			HealthComponent hc = hm.get(e);
+			
+			if((mc.xIntensity != 0 || mc.yIntensity !=0) && (hc == null || hc.state != PlayerState.DEAD)){
 				pc.body.applyLinearImpulse(new Vector2(mc.MAX_SPEED * mc.xIntensity, mc.MAX_SPEED * mc.yIntensity), pc.body.getWorldCenter(), true);
 			}
 		}
@@ -75,7 +82,8 @@ public class PhysicsSystem extends EntitySystem{
 				ServerPlayer p = (ServerPlayer)e;
 				server.sendToAllUDP(new PlayerMovementResponse(p.NAME, pc.body.getPosition().x, pc.body.getPosition().y));
 			}else if(e instanceof ServerCannonBall){
-				//Cannon code
+				ServerCannonBall ball = (ServerCannonBall)e;
+				server.sendToAllUDP(new ProjectileMovementResponse(ball.idComponent.ENTITY_ID, ball.getPosition().x, ball.getPosition().y));
 			}
 			
 

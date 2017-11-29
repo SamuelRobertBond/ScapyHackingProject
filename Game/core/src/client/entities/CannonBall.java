@@ -8,9 +8,18 @@ import client.components.SpriteComponent;
 
 public class CannonBall extends Entity{
 	
-	public CannonBall(float x, float y, float width, float height) {
-		add(new SpriteComponent(AssetLoader.CANNONBALL_TEXTURE, width, height, 0));
-		add(new PositionComponent(x, y));
+	public SpriteComponent sc;
+	public PositionComponent pc;
+	
+	public final float BALL_SIZE = 10;
+	
+	public CannonBall(float x, float y) {
+		
+		sc = new SpriteComponent(AssetLoader.CANNONBALL_TEXTURE, BALL_SIZE, BALL_SIZE, 0);
+		pc = new PositionComponent(x, y);
+		
+		add(sc);
+		add(pc);
 	}
 	
 }

@@ -1,6 +1,8 @@
 package client.worlds;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
@@ -20,7 +22,8 @@ import client.systems.MapRenderSystem;
 import client.systems.RenderSystem;
 import network.responses.JoinResponse;
 import network.responses.PlayerMovementResponse;
-import server.entities.ServerPlayer;
+import network.responses.ProjectileMovementResponse;
+import server.states.ProjectileState;
 
 public class ClientGameWorld implements World{
 
@@ -36,6 +39,7 @@ public class ClientGameWorld implements World{
 	//Entity Lists
 	private HashMap<String, Player> players;
 	private HashMap<Integer, CannonBall> projectiles;
+	private Queue<Integer> removalList;
 	
 	//Systems
 	private MapRenderSystem mapRenderSystem;
@@ -51,6 +55,7 @@ public class ClientGameWorld implements World{
 		//Init Entity Lists
 		players = new HashMap<String, Player>();
 		projectiles = new HashMap<Integer, CannonBall>();
+		removalList = new LinkedList<Integer>();
 		
 		//Player input
 		in = new InputMultiplexer();
@@ -110,8 +115,51 @@ public class ClientGameWorld implements World{
 			
 		});
 		
+		//Projectile Listener
+		client.addListener(new Listener(){
+			
+			@Override
+			public void received(Connection connection, Object object) {
+				if(object instanceof ProjectileMovementResponse){
+					ProjectileMovementResponse r = (ProjectileMovementResponse)object;
+					handleProjectile(r);
+				}
+			}
+			
+		});
 	}
 	
+	public void queueRemoval(Integer e) {
+		removalList.offer(e);
+	}
+	
+	public void handleRemovals(){
+		
+		while(!removalList.isEmpty()){
+			engine.removeEntity(projectiles.remove(removalList.poll()));
+		}
+		
+	}
+	
+	private void handleProjectile(ProjectileMovementResponse r) {
+		
+		CannonBall ball = projectiles.get(r.id);
+		
+		if(!projectiles.containsKey(r.id)){
+		
+			ball = new CannonBall(r.x, r.y);
+			projectiles.put(r.id, ball);
+			engine.addEntity(ball);
+		
+		}else if(r.state == ProjectileState.DEAD){
+			queueRemoval(r.id);
+		}else{
+			ball.pc.pos.x = r.x;
+			ball.pc.pos.y = r.y;
+		}
+		
+	}
+
 	private void initClientPlayer(Player p) {
 		player = p;
 		playerInput = new PlayerInputManager(client, player, camera);
@@ -122,6 +170,7 @@ public class ClientGameWorld implements World{
 	@Override
 	public void render(float delta) {
 		engine.update(delta);
+		handleRemovals();
 	}
 
 	@Override

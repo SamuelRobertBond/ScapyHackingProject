@@ -15,7 +15,7 @@ public class AssetLoader {
 	
 	public static void load(){
 		CANNON_BASE_TEXTURE = new Texture(Gdx.files.internal("CannonBase.png"));
-		//CANNONBALL_TEXTURE = new Texture(Gdx.files.internal(""));
+		CANNONBALL_TEXTURE = new Texture(Gdx.files.internal("CannonBase.png"));
 		MAP = new TmxMapLoader().load("map.tmx");
 	}
 	

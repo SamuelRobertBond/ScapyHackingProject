@@ -1,5 +1,8 @@
 package client.systems;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -8,14 +11,14 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Constants;
-
 import client.components.PositionComponent;
 import client.components.SpriteComponent;
+import client.entities.CannonBall;
 
 public class RenderSystem extends EntitySystem{
 
+	private Engine engine;
+	
 	private SpriteBatch batch;
 	private OrthographicCamera cam;
 	
@@ -44,6 +47,7 @@ public class RenderSystem extends EntitySystem{
 		
 		//Draw Each Entity
 		for(Entity e : entities){
+			
 			SpriteComponent sc = sm.get(e);
 			PositionComponent pc = pm.get(e);
 			

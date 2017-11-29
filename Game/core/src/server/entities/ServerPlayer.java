@@ -7,11 +7,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
 import server.Box2DUtils;
+import server.components.HealthComponent;
 import server.components.MovementComponent;
 import server.components.PhysicsComponent;
 
 public class ServerPlayer extends Entity{
 
+	public final int ID;
 	public final String NAME;
 	
 	public final float PLAYER_RADIUS = 10;
@@ -20,9 +22,11 @@ public class ServerPlayer extends Entity{
 	
 	private PhysicsComponent pc;
 	private MovementComponent mc;
+	public HealthComponent hc;
 	
-	public ServerPlayer(String name, float x, float y) {
+	public ServerPlayer(int id, String name, float x, float y) {
 		
+		this.ID = id;
 		this.NAME = name;
 		
 		//Creating Components
@@ -33,10 +37,12 @@ public class ServerPlayer extends Entity{
 		
 		pc = new PhysicsComponent(body, fixture);
 		mc = new MovementComponent(PLAYER_SPEED);
+		hc = new HealthComponent();
 		
 		//Adding Components
 		add(pc);
 		add(mc);
+		add(hc);
 	}
 
 	public Vector2 getPosition() {
