@@ -23,6 +23,7 @@ import client.systems.RenderSystem;
 import network.responses.JoinResponse;
 import network.responses.PlayerMovementResponse;
 import network.responses.ProjectileMovementResponse;
+import network.responses.RotationResponse;
 import server.states.ProjectileState;
 
 public class ClientGameWorld implements World{
@@ -127,6 +128,27 @@ public class ClientGameWorld implements World{
 			}
 			
 		});
+		
+		
+		client.addListener(new Listener(){
+			
+			@Override
+			public void received(Connection connection, Object object) {
+				
+				if(object instanceof RotationResponse){
+					changeRotation((RotationResponse)object);
+				}
+				
+			}
+			
+		});
+		
+	}
+	
+	private void changeRotation(RotationResponse r){
+		if(players.containsKey(r.name)){
+			players.get(r.name).positionComponent.rotation = r.rotation;
+		}
 	}
 	
 	public void queueRemoval(Integer e) {
@@ -145,8 +167,7 @@ public class ClientGameWorld implements World{
 		
 		CannonBall ball = projectiles.get(r.id);
 		
-		if(!projectiles.containsKey(r.id)){
-		
+		if(ball == null && r.state != ProjectileState.DEAD){
 			ball = new CannonBall(r.x, r.y);
 			projectiles.put(r.id, ball);
 			engine.addEntity(ball);

@@ -10,15 +10,17 @@ public class SpriteComponent implements Component{
 	
 	/**
 	 * Sprite Component for objects that require a sprite
-	 * @param texture
+	 * @param tex
 	 * @param width
 	 * @param height
 	 * @param angle - in degrees
 	 */
-	public SpriteComponent(Texture texture, float width, float height, float angle) {
-		sprite = new Sprite(texture);
+	public SpriteComponent(Texture tex, float width, float height, float angle) {
+		
+		sprite = new Sprite(tex);
 		sprite.setSize(width, height);
 		sprite.rotate(angle);
+		
 	}
 	
 }

@@ -17,36 +17,48 @@ public class ServerPlayer extends Entity{
 	public final String NAME;
 	
 	public final float PLAYER_RADIUS = 10;
-	
 	public final float PLAYER_SPEED = 460;
 	
-	private PhysicsComponent pc;
+	public PhysicsComponent pc;
 	private MovementComponent mc;
 	public HealthComponent hc;
 	
-	public ServerPlayer(int id, String name, float x, float y) {
+	public ServerPlayer(int id, String name) {
 		
 		this.ID = id;
 		this.NAME = name;
 		
+		mc = new MovementComponent(PLAYER_SPEED);
+		add(mc);
+	}
+	
+	public void respawn(Vector2 spawn){
+	
+		if(pc != null){
+			Box2DUtils.removeBody(pc.body);
+		}
+		
+		remove(PhysicsComponent.class);
+		remove(HealthComponent.class);
+		
 		//Creating Components
-		Body body = Box2DUtils.createBody(x, y, BodyType.DynamicBody);
+		Body body = Box2DUtils.createBody(spawn.x, spawn.y, BodyType.DynamicBody);
 		Fixture fixture = Box2DUtils.createCircularFixture(body, PLAYER_RADIUS);
 		
 		fixture.setUserData(this);
 		
 		pc = new PhysicsComponent(body, fixture);
-		mc = new MovementComponent(PLAYER_SPEED);
 		hc = new HealthComponent();
 		
-		//Adding Components
-		add(pc);
-		add(mc);
 		add(hc);
+		add(pc);
+		
 	}
 
 	public Vector2 getPosition() {
 		return pc.body.getPosition();
 	}
+
+
 
 }

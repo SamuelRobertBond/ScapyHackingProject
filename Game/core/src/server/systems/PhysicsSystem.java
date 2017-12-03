@@ -22,6 +22,7 @@ import server.components.MovementComponent;
 import server.components.PhysicsComponent;
 import server.entities.ServerCannonBall;
 import server.entities.ServerPlayer;
+import server.entities.Spawn;
 
 public class PhysicsSystem extends EntitySystem{
 
@@ -37,6 +38,8 @@ public class PhysicsSystem extends EntitySystem{
 	private ComponentMapper<MovementComponent> mm = ComponentMapper.getFor(MovementComponent.class);
 	private ComponentMapper<HealthComponent> hm = ComponentMapper.getFor(HealthComponent.class);
 	
+	private Spawn spawns[];
+	
 	public PhysicsSystem(Server server) {
 		
 		this.server = server;
@@ -44,14 +47,21 @@ public class PhysicsSystem extends EntitySystem{
 		world = new World(GRAVITY, false);
 		
 		Box2DUtils.world = world;
-		Box2DUtils.spawnTileMapWalls(AssetLoader.MAP, world);
+		spawns = Box2DUtils.spawnTileMapWalls(AssetLoader.MAP, world);
+		
 	}
 	
 	@Override
 	public void addedToEngine(Engine engine) {
+		
 		entities = engine.getEntitiesFor(Family.all(PhysicsComponent.class, MovementComponent.class).get());
 		collisionListener = new ContactSystem(engine, server, world);
 		world.setContactListener(collisionListener);
+		
+		for(int i = 0; i < spawns.length; ++i){
+			engine.addEntity(spawns[i]);
+		}
+		
 	}
 	
 	@Override

@@ -2,7 +2,6 @@ package server.systems;
 
 import java.util.LinkedList;
 import java.util.Queue;
-
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -18,6 +17,7 @@ import network.responses.ProjectileMovementResponse;
 import network.responses.StateResponse;
 import server.entities.ServerCannonBall;
 import server.entities.ServerPlayer;
+import server.entities.Spawn;
 import server.states.ProjectileState;
 
 public class ContactSystem implements ContactListener{
@@ -26,6 +26,7 @@ public class ContactSystem implements ContactListener{
 	private World world;
 	private Server server;
 	
+	
 	private Queue<Fixture> destoryFixtures;
 	
 	public ContactSystem(Engine engine, Server server, World world) {
@@ -33,6 +34,7 @@ public class ContactSystem implements ContactListener{
 		this.world = world;
 		this.server = server;
 		this.destoryFixtures = new LinkedList<Fixture>();
+		
 	}
 	
 	@Override
@@ -46,6 +48,24 @@ public class ContactSystem implements ContactListener{
 			checkCannonBallCollision(b, a);
 		}
 		
+		if(!setSpawnCollision(a, b, true)){
+			setSpawnCollision(b, a, true);
+		}
+		
+	}
+	
+	private boolean setSpawnCollision(Fixture a, Fixture b, boolean occupied){
+		
+		if(a.getUserData() instanceof Spawn){
+			if(b.getUserData() instanceof ServerPlayer){
+				
+				Spawn spawn = (Spawn) a.getUserData();
+				spawn.setOccupied(occupied);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	private boolean checkCannonBallCollision(Fixture a, Fixture b){
@@ -61,17 +81,26 @@ public class ContactSystem implements ContactListener{
 				}
 			}
 			
-			destoryFixtures.offer(a);
+			if(!b.isSensor()){
+				destoryFixtures.offer(a);
+			}
 			
 			return true;
 		}
 		
 		return false;
 	}
+	
 
 	@Override
 	public void endContact(Contact contact) {
-		// TODO Auto-generated method stub
+		
+		Fixture a = contact.getFixtureA();
+		Fixture b = contact.getFixtureB();
+		
+		if(!setSpawnCollision(a, b, false)){
+			setSpawnCollision(b, a, false);
+		}
 		
 	}
 

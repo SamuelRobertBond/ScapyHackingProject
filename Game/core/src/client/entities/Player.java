@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.mygdx.game.AssetLoader;
 import com.mygdx.game.Constants;
 
+import client.components.AnimationComponent;
 import client.components.PositionComponent;
 import client.components.SpriteComponent;
 import client.components.StateComponent;
@@ -16,6 +17,7 @@ public class Player extends Entity{
 	public final float PLAYER_WIDTH = 22;
 	public final float PLAYER_HEIGHT = 22;
 	
+	public AnimationComponent animationComponent;
 	public SpriteComponent spriteComponent;
 	public StateComponent stateComponent;
 	public PositionComponent positionComponent;
@@ -27,9 +29,11 @@ public class Player extends Entity{
 		
 		spriteComponent = new SpriteComponent(AssetLoader.CANNON_BASE_TEXTURE, PLAYER_WIDTH, PLAYER_HEIGHT, 0); //Base
 		positionComponent = new PositionComponent(x / Constants.PPM, y / Constants.PPM);
+		animationComponent = new AnimationComponent();
 		
 		add(spriteComponent);
 		add(positionComponent);
+		add(animationComponent);
 		
 	}
 	

@@ -63,10 +63,10 @@ public class GameScreen implements Screen{
 		
 		world.render(delta);
 		if(server != null){
-			server.debugRenderer(delta);
+			//server.debugRenderer(delta);
 		}
 		
-		debugCamera(delta);
+		//debugCamera(delta);
 		
 		
 	}
