@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryonet.Server;
 
 import client.states.PlayerState;
+import network.responses.DamageResponse;
 import network.responses.ProjectileMovementResponse;
 import network.responses.StateResponse;
 import server.entities.ServerCannonBall;
@@ -75,6 +76,7 @@ public class ContactSystem implements ContactListener{
 			if(b.getUserData() instanceof ServerPlayer){
 				ServerPlayer p = (ServerPlayer)b.getUserData();
 				--p.hc.health;
+				server.sendToAllUDP(new DamageResponse(p.NAME, p.hc.health));
 				if(p.hc.state != PlayerState.DEAD && p.hc.health < 1){
 					p.hc.state = PlayerState.DEAD;
 					server.sendToAllTCP(new StateResponse(p.NAME, p.hc.state));

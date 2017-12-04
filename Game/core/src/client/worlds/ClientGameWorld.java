@@ -20,6 +20,7 @@ import client.interfaces.World;
 import client.systems.CameraSystem;
 import client.systems.MapRenderSystem;
 import client.systems.RenderSystem;
+import network.responses.DamageResponse;
 import network.responses.JoinResponse;
 import network.responses.PlayerMovementResponse;
 import network.responses.ProjectileMovementResponse;
@@ -75,7 +76,7 @@ public class ClientGameWorld implements World{
 		
 	}
 	
-	public void addListeners(Client client){
+	private void addListeners(Client client){
 		
 		//Join Listener
 		client.addListener(new Listener(){
@@ -129,7 +130,7 @@ public class ClientGameWorld implements World{
 			
 		});
 		
-		
+		//Rotation Listener
 		client.addListener(new Listener(){
 			
 			@Override
@@ -139,6 +140,21 @@ public class ClientGameWorld implements World{
 					changeRotation((RotationResponse)object);
 				}
 				
+			}
+			
+		});
+		
+		//Damage Listener
+		client.addListener(new Listener(){
+			
+			@Override
+			public void received(Connection connection, Object object) {
+				if(object instanceof DamageResponse){
+					DamageResponse r = (DamageResponse)object;
+					if(players.containsKey(r.name)){
+						players.get(r.name).animationComponent.health = r.health;
+					}
+				}
 			}
 			
 		});

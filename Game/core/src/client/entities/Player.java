@@ -30,6 +30,7 @@ public class Player extends Entity{
 		spriteComponent = new SpriteComponent(AssetLoader.CANNON_BASE_TEXTURE, PLAYER_WIDTH, PLAYER_HEIGHT, 0); //Base
 		positionComponent = new PositionComponent(x / Constants.PPM, y / Constants.PPM);
 		animationComponent = new AnimationComponent();
+		stateComponent = new StateComponent();
 		
 		add(spriteComponent);
 		add(positionComponent);

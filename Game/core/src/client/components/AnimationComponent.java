@@ -9,7 +9,7 @@ import com.mygdx.game.AssetLoader;
 public class AnimationComponent implements Component{
 
 	public Sprite cannonSprite;
-	private int health = 3;
+	public int health = 3;
 	
 	public final float CANNON_WIDTH = 30f;
 	public final float CANNON_HEIGHT = 20f;

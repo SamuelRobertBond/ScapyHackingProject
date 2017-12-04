@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.esotericsoftware.kryonet.Client;
 
 import client.entities.Player;
+import client.states.PlayerState;
 import network.requests.MovementRequest;
 import network.requests.RotationRequest;
 import network.requests.ShootRequest;
@@ -89,7 +90,7 @@ public class PlayerInputManager implements InputProcessor{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		
-		if(canShoot){
+		if(canShoot && player != null && player.animationComponent.health > 1){
 			
 			Vector2 center = new Vector2(player.positionComponent.pos.x, player.positionComponent.pos.y);
 			Vector3 point = camera.unproject(new Vector3(getMousePosition(), camera.zoom));
@@ -151,14 +152,19 @@ public class PlayerInputManager implements InputProcessor{
 
 	private void handleRotation(){
 		
-		Vector2 center = new Vector2(player.positionComponent.pos.x, player.positionComponent.pos.y);
-		Vector3 point = camera.unproject(new Vector3(getMousePosition(), camera.zoom));
 		
-		Vector2 angle = (new Vector2(point.x - center.x, point.y - center.y).nor());
-		
-		player.positionComponent.rotation = angle.angle();
-		
-		client.sendUDP(new RotationRequest(angle.angle()));
+		if(player != null && player.animationComponent.health > 1){
+			
+			Vector2 center = new Vector2(player.positionComponent.pos.x, player.positionComponent.pos.y);
+			Vector3 point = camera.unproject(new Vector3(getMousePosition(), camera.zoom));
+			
+			Vector2 angle = (new Vector2(point.x - center.x, point.y - center.y).nor());
+			
+			player.positionComponent.rotation = angle.angle();
+			
+			client.sendUDP(new RotationRequest(angle.angle()));
+			
+		}
 		
 	}
 	

@@ -77,7 +77,7 @@ public class RenderSystem extends EntitySystem{
 				ac.cannonSprite.draw(batch);
 			}else{
 				stateTime += deltaTime;
-				batch.draw(ac.getDead().getKeyFrame(stateTime), pc.pos.x - ac.CANNON_WIDTH/2, pc.pos.y - ac.CANNON_HEIGHT/2, 0, 0, ac.CANNON_WIDTH, ac.CANNON_HEIGHT, 1, 1, 0);
+				batch.draw(ac.getDead().getKeyFrame(stateTime), pc.pos.x - ac.cannonSprite.getWidth()/2 + ac.CANNON_WIDTH/4, pc.pos.y - ac.CANNON_HEIGHT/2, ac.CANNON_WIDTH/4, ac.CANNON_HEIGHT/2, ac.CANNON_WIDTH, ac.CANNON_HEIGHT, 1, 1, p.positionComponent.rotation);
 			}
 			
 		}

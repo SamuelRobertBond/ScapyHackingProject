@@ -62,7 +62,7 @@ public class ServerGameWorld implements World{
 		physicsSystem = new PhysicsSystem(server);
 		engine.addSystem(physicsSystem);
 		
-		spawnSystem = new SpawnSystem();
+		spawnSystem = new SpawnSystem(server);
 		engine.addSystem(spawnSystem);
 		
 		setListeners();
@@ -170,10 +170,10 @@ public class ServerGameWorld implements World{
 		
 		for(Integer id : joinRequests.keySet()){
 			
-			JoinRequest r = joinRequests.get(id);
+			JoinRequest r = joinRequests.get(id); //Contains name to be implemented later
 			
 			//Adding the player to the server and alerting all the clients
-			ServerPlayer player = new ServerPlayer(id, id + ""); //Change x and y here (50, 50)
+			ServerPlayer player = new ServerPlayer(id, id + "");
 			spawnSystem.respawn(player);
 			
 			players.put(id, player);
@@ -206,7 +206,6 @@ public class ServerGameWorld implements World{
 		}
 		
 		handleJoinRequests();
-
 		engine.update(delta);
 	}
 

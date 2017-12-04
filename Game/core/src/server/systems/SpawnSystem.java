@@ -9,14 +9,18 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.esotericsoftware.kryonet.Server;
 
 import client.states.PlayerState;
+import network.responses.DamageResponse;
 import server.components.HealthComponent;
 import server.components.SpawnID;
 import server.entities.ServerPlayer;
 import server.entities.Spawn;
 
 public class SpawnSystem extends EntitySystem{
+	
+	private Server server;
 	
 	public final int RESPAWN_TIME = 3000;
 	
@@ -25,7 +29,8 @@ public class SpawnSystem extends EntitySystem{
 	private ImmutableArray<Entity> spawns;
 	private ImmutableArray<Entity> players;
 	
-	public SpawnSystem() {
+	public SpawnSystem(Server server) {
+		this.server = server;
 		respawnList = new HashMap<ServerPlayer, SpawnSystem.RespawnData>();
 	}
 	
@@ -51,7 +56,6 @@ public class SpawnSystem extends EntitySystem{
 		
 		for(ServerPlayer p : respawnList.keySet()){
 			respawnList.get(p).time += deltaTime;
-			System.out.println(respawnList.get(p).time);
 			if(respawnList.get(p).time > RESPAWN_TIME){
 				respawnList.remove(p);
 				respawn(p);
@@ -62,6 +66,8 @@ public class SpawnSystem extends EntitySystem{
 	
 	public void respawn(ServerPlayer player){
 		player.respawn(getSpawn());
+		server.sendToAllUDP(new DamageResponse(player.NAME, player.hc.health));
+		
 	}
 	
 	private Vector2 getSpawn(){
